@@ -38,35 +38,40 @@ $("#submitBtn").on("click", function () {
         // minutesAway: minutesAway
     });
 });
-database.ref().on("child_added", function (childSnapshot) {
-    // console.log("key", childSnapshot.key);
-    // console.log(childSnapshot.val());
-    // console.log(childSnapshot);
-    var frequency = childSnapshot.val().frequency;
-    var firstTrainTime = childSnapshot.val().firstTrainTime;
-    var firstTrainTimeMoment = moment(firstTrainTime, "HH:mm");
-    // console.log("firstTrainTimeMoment", firstTrainTimeMoment);
-    var currentTime= moment();
-
-    // setInterval(setTime, 1000);//10 s per time
-
-
-    var minuteArrival = currentTime.diff(firstTrainTimeMoment, "minutes");
-    var minuteLast = minuteArrival % frequency;
-    var minutesAway = frequency - minuteLast;
-    var nextArrival = currentTime.add(minutesAway, "minutes");
-    // var arrivaltime = nextArrival.format("HH:mm");
-    var arrivaltime = nextArrival.format('LT');
-
-      var tableString = "<tr id='" + childSnapshot.key + "'>  <td>" +
-        childSnapshot.val().trainName + "</td> <td>" +
-        childSnapshot.val().destination + "</td> <td>" +
-        childSnapshot.val().frequency + "</td> <td>" +
-        arrivaltime + "</td> <td>" +
-        minutesAway + "</td> <td>" +
-        "<input type='submit' value='remove train' style='background-color:rgb(22, 119, 199)' class='remove-train btn btn-primary btn-sm'></td> </tr>";
-    $("tbody").append(tableString);
-});
+function display(){
+    $("tbody").empty();
+    database.ref().on("child_added", function (childSnapshot) {
+        // console.log("key", childSnapshot.key);
+        // console.log(childSnapshot.val());
+        // console.log(childSnapshot);
+        var frequency = childSnapshot.val().frequency;
+        var firstTrainTime = childSnapshot.val().firstTrainTime;
+        var firstTrainTimeMoment = moment(firstTrainTime, "HH:mm");
+        // console.log("firstTrainTimeMoment", firstTrainTimeMoment);
+        var currentTime= moment();
+    
+        // setInterval(setTime, 1000);//10 s per time
+    
+    
+        var minuteArrival = currentTime.diff(firstTrainTimeMoment, "minutes");
+        var minuteLast = minuteArrival % frequency;
+        var minutesAway = frequency - minuteLast;
+        var nextArrival = currentTime.add(minutesAway, "minutes");
+        // var arrivaltime = nextArrival.format("HH:mm");
+        var arrivaltime = nextArrival.format('LT');
+    
+          var tableString = "<tr id='" + childSnapshot.key + "'>  <td>" +
+            childSnapshot.val().trainName + "</td> <td>" +
+            childSnapshot.val().destination + "</td> <td>" +
+            childSnapshot.val().frequency + "</td> <td>" +
+            arrivaltime + "</td> <td>" +
+            minutesAway + "</td> <td>" +
+            "<input type='submit' value='remove train' style='background-color:rgb(22, 119, 199)' class='remove-train btn btn-primary btn-sm'></td> </tr>";
+        $("tbody").append(tableString);
+    });
+}
+display();
+setInterval(display,1000);
 // function setTime() {
 //     var xhr = new XMLHttpRequest();
 //     xhr.onreadystatechange = function () {
